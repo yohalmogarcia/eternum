@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Inicio</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Hero Section -->
+        <section class="hero-gradient h-[500px] flex items-center justify-center text-center text-white px-4">
+            <div class="fade-in max-w-4xl mx-auto">
+                <h1 class="text-5xl md:text-6xl font-bold mb-4 serif">Honrando Vidas,<br>Preservando Memorias</h1>
+                <p class="text-xl mb-8 font-light">Un espacio seguro y digno para recordar a quienes ya no están.</p>
+                <button onclick="handleCreateMemorialClick()" class="btn-primary px-8 py-3 rounded-md text-lg font-semibold shadow-lg inline-block">
+                    Crear Memorial
+                </button>
+                
+                <!-- Deactivation CTA -->
+                <div class="mt-12 p-4 bg-white/10 backdrop-blur-md rounded-lg border border-white/20 inline-block">
+                    <p class="text-sm">¿Necesitas gestionar la cuenta de un fallecido en redes? 
+                    <a th:href="@{/deactivation-request}" class="text-[#C9A063] font-bold underline ml-1">Iniciar Solicitud de Desactivación</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Memorials Section -->
+        <section class="max-w-7xl mx-auto px-4 py-16" th:if="${featuredMemorials != null and !featuredMemorials.isEmpty()}">
+            <h2 class="text-3xl font-bold mb-10 text-center serif">Memoriales Destacados</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div th:each="memorial : ${featuredMemorials}" class="card-memorial bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer"
+                     th:onclick="'window.location.href=\'' + @{/memorial/{id}(id=${memorial.pkMemorial})} + '\''">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center relative">
+                        <i th:if="${memorial.profilePhotoUrl == null or memorial.profilePhotoUrl.isEmpty()}" class="fas fa-user-circle text-6xl text-gray-400"></i>
+                        <img th:if="${memorial.profilePhotoUrl != null and !memorial.profilePhotoUrl.isEmpty()}" 
+                             th:src="${memorial.profilePhotoUrl}" 
+                             class="w-full h-full object-cover" alt="Foto del memorial">
+                        <div class="absolute top-4 right-4 bg-[#C9A063] text-white px-2 py-1 rounded text-[10px] font-bold">DESTACADO</div>
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold mb-1" th:text="${memorial.deceasedName + ' ' + memorial.deceasedLastName}">Nombre del Fallecido</h3>
+                        <p class="text-gray-500 text-sm mb-4 italic">
+                            <span th:if="${memorial.birthDate != null}" th:text="${#temporals.format(memorial.birthDate, 'yyyy')}">1950</span>
+                            <span th:if="${memorial.birthDate == null}">...</span>
+                            - 
+                            <span th:text="${#temporals.format(memorial.deathDate, 'yyyy')}">2023</span>
+                        </p>
+                        <button class="w-full py-2 rounded border border-[#C9A063] text-[#C9A063] hover:bg-[#C9A063] hover:text-white transition-colors">
+                            Ver Memorial
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Memorials Section -->
+        <section class="max-w-7xl mx-auto px-4 py-16">
+            <h2 class="text-3xl font-bold mb-10 text-center serif">Memoriales Recientes</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" th:if="${recentMemorials != null and recentMemorials.hasContent()}">
+                <div th:each="memorial : ${recentMemorials.content}" class="card-memorial bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer"
+                     th:onclick="'window.location.href=\'' + @{/memorial/{id}(id=${memorial.pkMemorial})} + '\''">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center relative">
+                        <i th:if="${memorial.profilePhotoUrl == null or memorial.profilePhotoUrl.isEmpty()}" class="fas fa-user-circle text-6xl text-gray-400"></i>
+                        <img th:if="${memorial.profilePhotoUrl != null and !memorial.profilePhotoUrl.isEmpty()}" 
+                             th:src="${memorial.profilePhotoUrl}" 
+                             class="w-full h-full object-cover" alt="Foto del memorial">
+                        <div class="absolute top-4 right-4 bg-white/80 px-2 py-1 rounded text-[10px] font-bold text-gray-700">RECIENTE</div>
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold mb-1" th:text="${memorial.deceasedName + ' ' + memorial.deceasedLastName}">Nombre del Fallecido</h3>
+                        <p class="text-gray-500 text-sm mb-4 italic">
+                            <span th:if="${memorial.birthDate != null}" th:text="${#temporals.format(memorial.birthDate, 'yyyy')}">1950</span>
+                            <span th:if="${memorial.birthDate == null}">...</span>
+                            - 
+                            <span th:text="${#temporals.format(memorial.deathDate, 'yyyy')}">2023</span>
+                        </p>
+                        <button class="w-full py-2 rounded border border-[#C9A063] text-[#C9A063] hover:bg-[#C9A063] hover:text-white transition-colors">
+                            Ver Memorial
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- No memorials message -->
+            <div th:if="${recentMemorials == null or !recentMemorials.hasContent()}" class="text-center py-12">
+                <i class="fas fa-monument text-6xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">Aún no hay memoriales registrados. Sé el primero en crear uno.</p>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a th:href="@{/memorials}" class="text-gray-500 font-semibold hover:text-[#1A2B3C] transition-colors">
+                    Ver más memoriales <i class="fas fa-chevron-right ml-1"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="bg-white py-16">
+            <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-12 text-center serif">¿Por qué elegir Eternum?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center p-6">
+                        <div class="w-16 h-16 bg-[#C9A063]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-shield-alt text-2xl text-[#C9A063]"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Seguridad Garantizada</h3>
+                        <p class="text-gray-600">Tus datos y los de tus seres queridos están protegidos con encriptación de grado bancario.</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="w-16 h-16 bg-[#C9A063]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-infinity text-2xl text-[#C9A063]"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Para Siempre</h3>
+                        <p class="text-gray-600">Preservamos los recuerdos de por vida, con respaldos automáticos y almacenamiento seguro.</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="w-16 h-16 bg-[#C9A063]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-heart text-2xl text-[#C9A063]"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Conexión Emocional</h3>
+                        <p class="text-gray-600">Permite a familiares y amigos dejar condolencias y encender velas virtuales desde cualquier lugar.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:inline="javascript">
+            /**
+             * Handler para clic en botón Crear Memorial
+             * Verifica si hay sesión iniciada antes de redirigir
+             */
+            function handleCreateMemorialClick() {
+                // Verificar autenticación
+                var isAuth = AuthController.isAuthenticated();
+                console.log("Autenticado?", isAuth);
+                if (AuthController.isAuthenticated()) {
+                    // Usuario autenticado - redirigir a formulario de crear memorial
+                    window.location.href = '/eternum/memorials/create';
+                } else {
+                    // Usuario no autenticado - redirigir a login
+                    // Guardar la URL de destino para redirigir después del login
+                    sessionStorage.setItem('redirectAfterLogin', '/eternum/memorials/create');
+                    window.location.href = '/eternum/login';
+                }
+            }
+        </script>
+    </th:block>
+</body>
+</html>

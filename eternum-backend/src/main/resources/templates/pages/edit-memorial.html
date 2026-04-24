@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"
+      lang="es">
+<head>
+    <title>Editar Memorial</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Hero Section -->
+        <section class="bg-[#1A2B3C] py-12">
+            <div class="max-w-7xl mx-auto px-4 text-center text-white">
+                <h1 class="text-4xl font-bold mb-4 serif">Editar Memorial</h1>
+                <p class="text-lg text-gray-300">Actualiza la información del memorial</p>
+            </div>
+        </section>
+
+        <!-- Form Section -->
+        <section class="py-12 bg-gray-50">
+            <div class="max-w-4xl mx-auto px-4">
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    
+                    <!-- Loading Message -->
+                    <div id="loadingMessage" class="text-center py-8">
+                        <i class="fas fa-spinner fa-spin text-3xl text-[#C9A063]"></i>
+                        <p class="mt-4 text-gray-600">Cargando memorial...</p>
+                    </div>
+                    
+                    <!-- Success Message -->
+                    <div id="successMessage" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        Memorial actualizado exitosamente. Redirigiendo...
+                    </div>
+                    
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    </div>
+                    
+                    <!-- Unauthorized Message -->
+                    <div id="unauthorizedMessage" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-center">
+                        <p class="font-bold">No tienes permiso para editar este memorial</p>
+                        <p class="text-sm mt-2">Solo el creador puede editar el memorial.</p>
+                    </div>
+
+                    <form id="editMemorialForm" onsubmit="return handleEditMemorial(event)" class="hidden">
+                        <input type="hidden" id="memorialId">
+                        
+                        <!-- Section: Deceased Information -->
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold mb-6 serif text-[#1A2B3C] border-b pb-2">
+                                <i class="fas fa-user-circle mr-2 text-[#C9A063]"></i>Información del Fallecido
+                            </h2>
+                            
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+                                    <input type="text" id="deceasedName" required
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent"
+                                           placeholder="Ej: Juan">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Apellido *</label>
+                                    <input type="text" id="deceasedLastName" required
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent"
+                                           placeholder="Ej: Pérez">
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6 mt-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
+                                    <input type="date" id="birthDate"
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Fallecimiento *</label>
+                                    <input type="date" id="deathDate" required
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent">
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Epitafio</label>
+                                <input type="text" id="epitaph"
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent"
+                                       placeholder="Ej: Siempre en nuestros corazones">
+                            </div>
+                        </div>
+
+                        <!-- Section: Biography -->
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold mb-6 serif text-[#1A2B3C] border-b pb-2">
+                                <i class="fas fa-book-open mr-2 text-[#C9A063]"></i>Biografía
+                            </h2>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Biografía</label>
+                                <textarea id="biography" rows="6"
+                                          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent"
+                                          placeholder="Comparte la historia de vida de tu ser querido..."></textarea>
+                                <p class="text-sm text-gray-500 mt-1">Puedes incluir logros, hobbies, anécdotas y cualquier detalle que quieras compartir.</p>
+                            </div>
+                        </div>
+
+                        <!-- Section: Photos -->
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold mb-6 serif text-[#1A2B3C] border-b pb-2">
+                                <i class="fas fa-images mr-2 text-[#C9A063]"></i>Fotografía
+                            </h2>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">URL de Foto de Perfil</label>
+                                <input type="url" id="profilePhotoUrl"
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent"
+                                       placeholder="https://ejemplo.com/foto.jpg">
+                                <p class="text-sm text-gray-500 mt-1">Ingresa la URL de una imagen o sube una foto más tarde desde el memorial.</p>
+                                
+                                <!-- Preview de la imagen -->
+                                <div id="imagePreview" class="mt-4 hidden">
+                                    <p class="text-sm text-gray-600 mb-2">Vista previa:</p>
+                                    <img id="previewImg" src="" alt="Vista previa" class="w-32 h-32 object-cover rounded-lg border">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section: Privacy -->
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold mb-6 serif text-[#1A2B3C] border-b pb-2">
+                                <i class="fas fa-shield-alt mr-2 text-[#C9A063]"></i>Privacidad
+                            </h2>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="isPublic" checked
+                                       class="w-4 h-4 text-[#C9A063] border-gray-300 rounded focus:ring-[#C9A063]">
+                                <label for="isPublic" class="ml-2 text-sm text-gray-700">
+                                    Hacer este memorial público (visible para todos)
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 pt-4 border-t">
+                            <button type="submit" id="submitBtn"
+                                    class="btn-primary px-8 py-3 rounded-lg font-semibold text-lg flex-1">
+                                <i class="fas fa-save mr-2"></i>Guardar Cambios
+                            </button>
+                            <a id="cancelBtn" th:href="@{/memorials}" class="px-8 py-3 rounded-lg font-semibold text-lg border border-gray-300 text-gray-700 hover:bg-gray-50 text-center">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/memorial/MemorialController.js}"></script>
+        <script>
+            let currentMemorial = null;
+            let memorialId = null;
+            
+            /**
+             * Obtener ID del memorial de la URL
+             */
+            function getMemorialIdFromUrl() {
+                const path = window.location.pathname;
+                const matches = path.match(/\/eternum\/memorials\/edit\/(\d+)/);
+                return matches ? parseInt(matches[1]) : null;
+            }
+            
+            /**
+             * Cargar datos del memorial
+             */
+            async function loadMemorial() {
+                memorialId = getMemorialIdFromUrl();
+                
+                if (!memorialId) {
+                    showError('ID de memorial no válido');
+                    return;
+                }
+                
+                // Verificar autenticación
+                if (!AuthController.isAuthenticated()) {
+                    alert('Debes iniciar sesión para editar un memorial');
+                    window.location.href = '/eternum/login';
+                    return;
+                }
+                
+                try {
+                    const result = await MemorialController.getById(memorialId);
+                    
+                    if (!result.success || !result.data) {
+                        showError('Memorial no encontrado');
+                        return;
+                    }
+                    
+                    currentMemorial = result.data;
+                    
+                    // Verificar que el usuario actual es el creador
+                    const userData = JSON.parse(localStorage.getItem('eternum_user') || '{}');
+                    if (currentMemorial.userEmail && currentMemorial.userEmail !== userData.email) {
+                        document.getElementById('loadingMessage').classList.add('hidden');
+                        document.getElementById('unauthorizedMessage').classList.remove('hidden');
+                        return;
+                    }
+                    
+                    // Llenar el formulario
+                    fillForm(currentMemorial);
+                    
+                    // Mostrar formulario
+                    document.getElementById('loadingMessage').classList.add('hidden');
+                    document.getElementById('editMemorialForm').classList.remove('hidden');
+                    
+                } catch (error) {
+                    console.error('Error loading memorial:', error);
+                    showError('Error al cargar el memorial');
+                }
+            }
+            
+            /**
+             * Llenar formulario con datos del memorial
+             */
+            function fillForm(memorial) {
+                document.getElementById('memorialId').value = memorial.id || memorial.pkMemorial;
+                document.getElementById('deceasedName').value = memorial.deceasedName || '';
+                document.getElementById('deceasedLastName').value = memorial.deceasedLastName || '';
+                document.getElementById('birthDate').value = memorial.birthDate || '';
+                document.getElementById('deathDate').value = memorial.deathDate || '';
+                document.getElementById('epitaph').value = memorial.epitaph || '';
+                document.getElementById('biography').value = memorial.biography || '';
+                document.getElementById('profilePhotoUrl').value = memorial.profilePhotoUrl || memorial.mainPhotoUrl || '';
+                document.getElementById('isPublic').checked = memorial.isPublic !== false;
+                
+                // Actualizar link de cancelar
+                document.getElementById('cancelBtn').href = '/memorial/' + (memorial.id || memorial.pkMemorial);
+                
+                // Mostrar preview de imagen si existe
+                const photoUrl = memorial.profilePhotoUrl || memorial.mainPhotoUrl;
+                if (photoUrl) {
+                    document.getElementById('previewImg').src = photoUrl;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                }
+            }
+            
+            /**
+             * Handler para editar memorial
+             */
+            async function handleEditMemorial(event) {
+                event.preventDefault();
+                
+                if (!AuthController.isAuthenticated()) {
+                    alert('Debes iniciar sesión para editar un memorial');
+                    window.location.href = '/eternum/login';
+                    return false;
+                }
+                
+                const btn = document.getElementById('submitBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Guardando...';
+                
+                const memorialData = {
+                    deceasedName: document.getElementById('deceasedName').value,
+                    deceasedLastName: document.getElementById('deceasedLastName').value,
+                    birthDate: document.getElementById('birthDate').value || null,
+                    deathDate: document.getElementById('deathDate').value,
+                    epitaph: document.getElementById('epitaph').value,
+                    biography: document.getElementById('biography').value,
+                    profilePhotoUrl: document.getElementById('profilePhotoUrl').value,
+                    isPublic: document.getElementById('isPublic').checked
+                };
+                
+                try {
+                    const result = await MemorialController.update(memorialId, memorialData);
+                    
+                    if (result.success) {
+                        document.getElementById('successMessage').classList.remove('hidden');
+                        document.getElementById('errorMessage').classList.add('hidden');
+                        
+                        setTimeout(() => {
+                            window.location.href = '/eternum/memorial/' + memorialId;
+                        }, 2000);
+                    } else {
+                        if (result.message && result.message.includes('permiso')) {
+                            document.getElementById('unauthorizedMessage').classList.remove('hidden');
+                        } else {
+                            showError(result.message || 'Error al actualizar el memorial');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating memorial:', error);
+                    showError('Error al actualizar el memorial. Intente nuevamente.');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save mr-2"></i>Guardar Cambios';
+                }
+                
+                return false;
+            }
+            
+            /**
+             * Mostrar mensaje de error
+             */
+            function showError(message) {
+                document.getElementById('loadingMessage').classList.add('hidden');
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.textContent = message;
+                errorDiv.classList.remove('hidden');
+            }
+            
+            // Cargar memorial al iniciar
+            document.addEventListener('DOMContentLoaded', loadMemorial);
+            
+            // Actualizar preview de imagen cuando cambia la URL
+            document.getElementById('profilePhotoUrl')?.addEventListener('change', function() {
+                const url = this.value;
+                if (url) {
+                    document.getElementById('previewImg').src = url;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                } else {
+                    document.getElementById('imagePreview').classList.add('hidden');
+                }
+            });
+        </script>
+    </th:block>
+</body>
+</html>

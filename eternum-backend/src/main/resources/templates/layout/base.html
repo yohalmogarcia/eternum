@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Eternum - Cementerio Virtual. Un espacio seguro y digno para recordar a quienes ya no están.">
+    <meta name="keywords" content="cementerio virtual, memoriales, homenajes, velas virtuales, condolencias">
+    <meta name="author" content="Eternum">
+    
+    <title layout:title-pattern="$CONTENT_TITLE - Eternum">Eternum - Cementerio Virtual</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS Local de Respaldo -->
+    <link rel="stylesheet" th:href="@{/css/eternum.css}">
+    
+    <!-- Google Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+        
+        :root {
+            --primary: #1A2B3C;
+            --accent: #C9A063;
+            --accent-hover: #B08A52;
+            --bg-light: #F4F6F8;
+            --text-dark: #333333;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+        
+        h1, h2, h3, .serif {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+        
+        .nav-link:hover {
+            color: var(--accent);
+        }
+        
+        .card-memorial {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-memorial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .candle-animation {
+            filter: drop-shadow(0 0 10px rgba(201, 160, 99, 0.8));
+            animation: flicker 2s infinite alternate;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.8; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(rgba(26, 43, 60, 0.7), rgba(26, 43, 60, 0.7)), 
+                        url('https://images.unsplash.com/photo-1528114039593-4366cc08227d?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+    
+    <th:block layout:fragment="head"></th:block>
+</head>
+<body class="min-h-screen flex flex-col">
+    
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+    
+    <!-- Main Content -->
+    <main class="flex-grow" layout:fragment="content">
+    </main>
+    
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    
+    <!-- Common Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Auth Controller - Needed for header authentication state -->
+    <script th:src="@{/js/auth/AuthController.js}"></script>
+    
+    <th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

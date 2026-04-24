@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${memorial != null ? memorial.deceasedName + ' ' + memorial.deceasedLastName : 'Memorial'}">Memorial</title>
+    <meta th:if="${memorial != null}" name="description" th:content="'Memorial de ' + ${memorial.deceasedName} + ' - ' + ${memorial.epitaph}">
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="fade-in" th:if="${memorial != null}">
+            <!-- Hero Memorial -->
+            <div class="bg-gray-100 py-20 px-4 text-center border-b-4 border-[#C9A063]">
+                <h1 class="text-5xl font-bold serif mb-2" th:text="${memorial.deceasedName + ' ' + memorial.deceasedLastName}">Nombre del Fallecido</h1>
+                <p class="text-xl text-gray-600 font-light italic">
+                    <span th:if="${memorial.birthDate != null}" th:text="${#temporals.format(memorial.birthDate, 'yyyy')}">1950</span>
+                    <span th:if="${memorial.birthDate == null}">...</span>
+                    - 
+                    <span th:text="${#temporals.format(memorial.deathDate, 'yyyy')}">2023</span>
+                </p>
+                <div class="mt-8">
+                    <div class="w-32 h-32 bg-gray-300 rounded-full mx-auto border-4 border-white shadow-xl flex items-center justify-center overflow-hidden">
+                        <i th:if="${memorial.profilePhotoUrl == null or memorial.profilePhotoUrl.isEmpty()}" class="fas fa-user text-6xl text-gray-500"></i>
+                        <img th:if="${memorial.profilePhotoUrl != null and !memorial.profilePhotoUrl.isEmpty()}" 
+                             th:src="${memorial.profilePhotoUrl}" 
+                             class="w-full h-full object-cover" alt="Foto del memorial">
+                    </div>
+                </div>
+                <p class="mt-6 text-lg text-[#1A2B3C] serif font-semibold" th:text="${memorial.epitaph ?: 'Siempre en nuestros corazones'}">"Siempre en nuestros corazones"</p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <!-- Left Column: Content -->
+                <div class="lg:col-span-2 space-y-12">
+                    <!-- Tabs -->
+                    <div class="flex border-b border-gray-200">
+                        <button onclick="showTab('bio')" id="tab-bio" class="tab-btn px-6 py-3 border-b-2 border-[#C9A063] text-[#1A2B3C] font-bold">Biografía</button>
+                        <button onclick="showTab('gallery')" id="tab-gallery" class="tab-btn px-6 py-3 text-gray-400 hover:text-gray-600">Galería de Fotos</button>
+                        <button onclick="showTab('condolences')" id="tab-condolences" class="tab-btn px-6 py-3 text-gray-400 hover:text-gray-600">Muro de Condolencias</button>
+                    </div>
+
+                    <!-- Biography Section -->
+                    <section id="section-bio" class="tab-section bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="text-2xl font-bold mb-4 serif text-[#1A2B3C]">Biografía</h3>
+                        <div class="prose max-w-none text-gray-700 leading-relaxed space-y-4">
+                            <p th:if="${memorial.biography != null and !memorial.biography.isEmpty()}" 
+                               th:text="${memorial.biography}">Biografía del fallecido...</p>
+                            <p th:if="${memorial.biography == null or memorial.biography.isEmpty()}" 
+                               class="text-gray-400 italic">No hay biografía disponible.</p>
+                        </div>
+                        <button onclick="subscribeToAnniversary()" class="mt-8 bg-gray-50 border border-gray-200 px-4 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-bell text-[#C9A063]"></i> Suscribirse a Notificaciones de Aniversario
+                        </button>
+                    </section>
+
+                    <!-- Gallery Section -->
+                    <section id="section-gallery" class="tab-section bg-white p-8 rounded-xl shadow-sm border border-gray-100 hidden">
+                        <h3 class="text-2xl font-bold mb-4 serif text-[#1A2B3C]">Galería de Fotos</h3>
+                        <div th:if="${memorial.photos != null and !memorial.photos.isEmpty()}" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div th:each="photo : ${memorial.photos}" class="aspect-square bg-gray-200 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
+                                <img th:src="${photo.photoUrl}" th:alt="${photo.caption}" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        <div th:if="${memorial.photos == null or memorial.photos.isEmpty()}" class="text-center py-8">
+                            <i class="fas fa-images text-4xl text-gray-300 mb-2"></i>
+                            <p class="text-gray-500">No hay fotos en la galería aún.</p>
+                        </div>
+                    </section>
+
+                    <!-- Condolences Section -->
+                    <section id="section-condolences" class="tab-section bg-white p-8 rounded-xl shadow-sm border border-gray-100 hidden">
+                        <h3 class="text-2xl font-bold mb-6 serif text-[#1A2B3C]">Muro de Recuerdos</h3>
+                        
+                        <!-- Add Condolence Form -->
+                        <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="font-bold mb-3 text-[#1A2B3C]">Deja un mensaje de condolencia</h4>
+                            <form id="condolenceForm" onsubmit="return submitCondolence(event)">
+                                <input type="hidden" id="memorialId" th:value="${memorial.pkMemorial}">
+                                <div class="mb-3">
+                                    <input type="text" id="condolenceAuthor" placeholder="Tu nombre" required
+                                           class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:outline-none">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="email" id="condolenceEmail" placeholder="Tu email (opcional)"
+                                           class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:outline-none">
+                                </div>
+                                <textarea id="condolenceMessage" placeholder="Deja un recuerdo o mensaje de luz..." required
+                                          class="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:outline-none h-24 resize-none"></textarea>
+                                <div class="text-right mt-3">
+                                    <button type="submit" class="btn-primary px-6 py-2 rounded-lg font-bold">
+                                        <i class="fas fa-paper-plane mr-2"></i>Publicar Mensaje
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Condolences List -->
+                        <div id="condolencesList" class="space-y-4">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right Column: Sidebar -->
+                <div class="space-y-8">
+                    <!-- Candle Counter -->
+                    <div class="bg-[#1A2B3C] text-white p-8 rounded-xl shadow-xl border-t-4 border-[#C9A063]">
+                        <div class="text-center">
+                            <div class="text-5xl mb-2 candle-animation">🕯️</div>
+                            <h3 class="text-3xl font-bold serif mb-1" id="candleCount" th:text="${memorial.candleCount}">87</h3>
+                            <p class="text-white/60 text-sm uppercase tracking-widest mb-6">Velas Encendidas</p>
+                            <button onclick="lightCandle()" id="lightCandleBtn" class="w-full btn-primary py-4 rounded-lg font-bold flex items-center justify-center gap-2">
+                                <i class="fas fa-fire"></i> Encender una Vela Virtual
+                            </button>
+                        </div>
+                        <div class="mt-8 border-t border-white/10 pt-6">
+                            <p class="text-xs text-center italic text-white/50">"Cada vela encendida mantiene viva la llama de su recuerdo."</p>
+                        </div>
+                    </div>
+
+                    <!-- Photo Gallery Preview -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h4 class="font-bold mb-4 text-[#1A2B3C]">Galería Multimedia</h4>
+                        <div th:if="${memorial.photos != null and !memorial.photos.isEmpty()}" class="grid grid-cols-2 gap-2">
+                            <div th:each="photo, iterStat : ${memorial.photos}" th:if="${iterStat.index < 4}" 
+                                 class="h-24 bg-gray-200 rounded-md overflow-hidden hover:opacity-80 cursor-pointer">
+                                <img th:src="${photo.photoUrl}" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        <div th:if="${memorial.photos == null or memorial.photos.isEmpty()}" class="text-center py-4">
+                            <i class="fas fa-image text-3xl text-gray-300 mb-2"></i>
+                            <p class="text-sm text-gray-500">No hay fotos disponibles</p>
+                        </div>
+                        <button onclick="showTab('gallery')" class="w-full mt-4 text-sm text-[#C9A063] font-bold hover:underline">
+                            Ver todas las fotos
+                        </button>
+                    </div>
+
+                    <!-- Share Memorial -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h4 class="font-bold mb-4 text-[#1A2B3C]">Compartir Memorial</h4>
+                        <div class="flex gap-2">
+                            <button onclick="shareOn('facebook')" class="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+                            <button onclick="shareOn('twitter')" class="flex-1 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors">
+                                <i class="fab fa-twitter"></i>
+                            </button>
+                            <button onclick="shareOn('whatsapp')" class="flex-1 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            <button onclick="copyLink()" class="flex-1 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Edit Memorial - Solo para el creador -->
+                    <div id="editMemorialSection" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h4 class="font-bold mb-4 text-[#1A2B3C]">Administrar Memorial</h4>
+                        <a th:href="@{/memorials/edit/{id}(id=${memorial.pkMemorial})}" class="w-full block text-center bg-[#C9A063] text-white py-3 rounded-lg font-bold hover:bg-[#B8925F] transition-colors">
+                            <i class="fas fa-edit mr-2"></i>Editar Memorial
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Memorial Not Found -->
+        <div th:if="${memorial == null}" class="min-h-[60vh] flex items-center justify-center">
+            <div class="text-center">
+                <i class="fas fa-monument text-6xl text-gray-300 mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-700 mb-2">Memorial no encontrado</h2>
+                <p class="text-gray-500 mb-4">El memorial que buscas no existe o ha sido eliminado.</p>
+                <a th:href="@{/memorials}" class="btn-primary px-6 py-2 rounded-lg inline-block">
+                    Ver todos los memoriales
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/memorial/MemorialController.js}"></script>
+        <script th:inline="javascript">
+            const memorialId = [[${memorial != null ? memorial.pkMemorial : 'null'}]];
+            
+            function showTab(tabName) {
+                // Hide all sections
+                document.querySelectorAll('.tab-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                
+                // Show selected section
+                document.getElementById('section-' + tabName).classList.remove('hidden');
+                
+                // Update tab styles
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('border-b-2', 'border-[#C9A063]', 'text-[#1A2B3C]', 'font-bold');
+                    btn.classList.add('text-gray-400');
+                });
+                
+                document.getElementById('tab-' + tabName).classList.add('border-b-2', 'border-[#C9A063]', 'text-[#1A2B3C]', 'font-bold');
+                document.getElementById('tab-' + tabName).classList.remove('text-gray-400');
+                
+                // Load condolences if tab is condolences
+                if (tabName === 'condolences' && memorialId) {
+                    loadCondolences(memorialId);
+                }
+            }
+            
+            // Load condolences on page load if hash is set
+            if (window.location.hash === '#condolences') {
+                showTab('condolences');
+            }
+            
+            /**
+             * Verificar si el usuario actual es el creador y mostrar botón de editar
+             */
+            function checkEditPermission() {
+                const userData = localStorage.getItem('eternum_user');
+                if (!userData || !memorialId) return;
+                
+                const user = JSON.parse(userData);
+                
+                // Obtener datos del memorial para verificar el creador
+                MemorialController.getById(memorialId).then(result => {
+                    if (result.success && result.data) {
+                        const memorial = result.data;
+                        // Verificar si el email del usuario coincide con el del creador
+                        if (memorial.userEmail === user.email) {
+                            document.getElementById('editMemorialSection')?.classList.remove('hidden');
+                        }
+                    }
+                });
+            }
+            
+            // Verificar permisos al cargar la página
+            checkEditPermission();
+        </script>
+    </th:block>
+</body>
+</html>

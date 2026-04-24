@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eternum - Cementerio Virtual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --primary: #1A2B3C;
+            --accent: #C9A063;
+            --accent-hover: #B08A52;
+            --bg-light: #F4F6F8;
+            --text-dark: #333333;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        h1, h2, h3, .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .nav-link:hover {
+            color: var(--accent);
+        }
+
+        .card-memorial {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-memorial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .hero-gradient {
+            background: linear-gradient(rgba(26, 43, 60, 0.7), rgba(26, 43, 60, 0.7)), 
+                        url('https://images.unsplash.com/photo-1528114039593-4366cc08227d?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .candle-animation {
+            filter: drop-shadow(0 0 10px rgba(201, 160, 99, 0.8));
+            animation: flicker 2s infinite alternate;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.8; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navegación -->
+    <nav class="bg-[#1A2B3C] text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+                    <div class="w-10 h-10 bg-[#C9A063] rounded-full flex items-center justify-center text-[#1A2B3C]">
+                        <i class="fas fa-dove"></i>
+                    </div>
+                    <span class="text-2xl font-bold tracking-tight serif">Eternum</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" onclick="showPage('home')" class="nav-link">Inicio</a>
+                    <a href="#" class="nav-link">Memoriales</a>
+                    <a href="#" class="nav-link">Servicios</a>
+                    <a href="#" class="nav-link">Tarifas</a>
+                    <div class="relative">
+                        <input type="text" placeholder="Buscar..." class="bg-white/10 border border-white/20 rounded-full py-1 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A063] w-48">
+                        <i class="fas fa-search absolute right-3 top-2 text-white/50 text-xs"></i>
+                    </div>
+                    <button onclick="showPage('login')" class="nav-link border border-white/30 px-4 py-1 rounded">Iniciar Sesión</button>
+                    <button class="btn-primary px-4 py-1 rounded">Registrarse</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main id="content">
+        <!-- Las páginas se cargan aquí mediante JS -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#1A2B3C] text-white/80 py-12 mt-20 border-t-4 border-[#C9A063]">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 bg-[#C9A063] rounded-full flex items-center justify-center text-[#1A2B3C]">
+                        <i class="fas fa-dove text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold serif text-white">Eternum</span>
+                </div>
+                <p class="text-sm">Preservando el legado y la memoria de nuestros seres queridos con dignidad y respeto.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Navegación</h4>
+                <ul class="text-sm space-y-2">
+                    <li><a href="#" class="hover:text-[#C9A063]">Inicio</a></li>
+                    <li><a href="#" class="hover:text-[#C9A063]">Memoriales</a></li>
+                    <li><a href="#" class="hover:text-[#C9A063]">Tarifas</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Soporte</h4>
+                <ul class="text-sm space-y-2">
+                    <li><a href="#" class="hover:text-[#C9A063]">Ayuda</a></li>
+                    <li><a href="#" class="hover:text-[#C9A063]">Contacto</a></li>
+                    <li><a href="#" class="hover:text-[#C9A063]">Desactivación de Cuentas</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Legal</h4>
+                <ul class="text-sm space-y-2">
+                    <li><a href="#" class="hover:text-[#C9A063]">Política de Privacidad</a></li>
+                    <li><a href="#" class="hover:text-[#C9A063]">Términos de Servicio</a></li>
+                    <li><a href="#" class="hover:text-[#C9A063]">Gestión de Consentimiento</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-white/10 text-center text-xs">
+            <p>© 2024 Eternum. Sus datos están protegidos con encriptación de grado bancario.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        function showPage(pageId) {
+            const container = document.getElementById('content');
+            window.scrollTo(0, 0);
+
+            if (pageId === 'home') {
+                container.innerHTML = `
+                    <section class="hero-gradient h-[500px] flex items-center justify-center text-center text-white px-4">
+                        <div class="fade-in">
+                            <h1 class="text-5xl md:text-6xl font-bold mb-4">Honrando Vidas,<br>Preservando Memorias</h1>
+                            <p class="text-xl mb-8 font-light">Un espacio seguro y digno para recordar a quienes ya no están.</p>
+                            <button class="btn-primary px-8 py-3 rounded-md text-lg font-semibold shadow-lg">Crear Memorial</button>
+                            <div class="mt-12 p-4 bg-white/10 backdrop-blur-md rounded-lg border border-white/20 inline-block">
+                                <p class="text-sm">¿Necesitas gestionar la cuenta de un fallecido en redes? 
+                                <a href="#" class="text-[#C9A063] font-bold underline ml-1">Iniciar Solicitud de Desactivación</a></p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="max-w-7xl mx-auto px-4 py-16">
+                        <h2 class="text-3xl font-bold mb-10 text-center serif">Memoriales Recientes</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            ${Array(4).fill(0).map(() => `
+                                <div class="card-memorial bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer" onclick="showPage('detail')">
+                                    <div class="h-48 bg-gray-200 flex items-center justify-center relative">
+                                        <i class="fas fa-user-circle text-6xl text-gray-400"></i>
+                                        <div class="absolute top-4 right-4 bg-white/80 px-2 py-1 rounded text-[10px] font-bold">RECIENTE</div>
+                                    </div>
+                                    <div class="p-6 text-center">
+                                        <h3 class="text-xl font-bold mb-1">Juan Pérez G.</h3>
+                                        <p class="text-gray-500 text-sm mb-4 italic">1950 - 2023</p>
+                                        <button class="w-full py-2 rounded border border-[#C9A063] text-[#C9A063] hover:bg-[#C9A063] hover:text-white transition-colors">Ver Memorial</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="text-center mt-12">
+                            <button class="text-gray-500 font-semibold hover:text-[#1A2B3C]">Ver más memoriales <i class="fas fa-chevron-right ml-1"></i></button>
+                        </div>
+                    </section>
+                `;
+            } else if (pageId === 'login') {
+                container.innerHTML = `
+                    <section class="min-h-screen flex items-center justify-center px-4 py-20 bg-slate-200">
+                        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-100 fade-in">
+                            <div class="text-center mb-8">
+                                <div class="w-16 h-16 bg-[#C9A063] rounded-full flex items-center justify-center text-[#1A2B3C] mx-auto mb-4">
+                                    <i class="fas fa-lock text-2xl"></i>
+                                </div>
+                                <h2 class="text-3xl font-bold serif">Iniciar Sesión</h2>
+                            </div>
+                            <form class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                                    <div class="relative">
+                                        <i class="fas fa-envelope absolute left-3 top-3 text-gray-400"></i>
+                                        <input type="email" placeholder="ejemplo@correo.com" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:outline-none">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                                    <div class="relative">
+                                        <i class="fas fa-key absolute left-3 top-3 text-gray-400"></i>
+                                        <input type="password" placeholder="••••••••" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:outline-none">
+                                    </div>
+                                    <div class="text-right mt-1">
+                                        <a href="#" class="text-xs text-[#C9A063] hover:underline">¿Olvidó su contraseña?</a>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="showPage('home')" class="btn-primary w-full py-3 rounded-lg font-bold shadow-md">Ingresar</button>
+                                
+                                <div class="relative my-8">
+                                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
+                                    <div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-gray-500">O inicia sesión con</span></div>
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <button class="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition-colors"><i class="fab fa-google text-red-500"></i></button>
+                                    <button class="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition-colors"><i class="fab fa-facebook text-blue-600"></i></button>
+                                    <button class="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition-colors"><i class="fas fa-envelope"></i></button>
+                                </div>
+                            </form>
+                            <p class="mt-8 text-center text-sm text-gray-600">
+                                ¿No tienes cuenta? <a href="#" class="text-[#C9A063] font-bold hover:underline">Registrarse</a>
+                            </p>
+                        </div>
+                    </section>
+                `;
+            } else if (pageId === 'detail') {
+                container.innerHTML = `
+                    <div class="fade-in">
+                        <!-- Hero Memorial -->
+                        <div class="bg-gray-100 py-20 px-4 text-center border-b border-[#C9A063]">
+                            <h1 class="text-5xl font-bold serif mb-2">Juan Pérez G.</h1>
+                            <p class="text-xl text-gray-600 font-light italic">1950 - 2023</p>
+                            <div class="mt-8">
+                                <div class="w-32 h-32 bg-gray-300 rounded-full mx-auto border-4 border-white shadow-xl flex items-center justify-center overflow-hidden">
+                                     <i class="fas fa-user text-6xl text-gray-500"></i>
+                                </div>
+                            </div>
+                            <p class="mt-6 text-lg text-[#1A2B3C] serif font-semibold">"Siempre en nuestros corazones"</p>
+                        </div>
+
+                        <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
+                            <!-- Columna Izquierda: Contenido -->
+                            <div class="lg:col-span-2 space-y-12">
+                                <!-- Pestañas (Simuladas) -->
+                                <div class="flex border-b border-gray-200">
+                                    <button class="px-6 py-3 border-b-2 border-[#C9A063] text-[#1A2B3C] font-bold">Biografía</button>
+                                    <button class="px-6 py-3 text-gray-400 hover:text-gray-600" onclick="alert('Funcionalidad de Galería')">Galería de Fotos</button>
+                                    <button class="px-6 py-3 text-gray-400 hover:text-gray-600">Muro de Condolencias</button>
+                                </div>
+
+                                <section id="bio" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                                    <h3 class="text-2xl font-bold mb-4 serif text-[#1A2B3C]">Biografía</h3>
+                                    <div class="prose max-w-none text-gray-700 leading-relaxed space-y-4">
+                                        <p>Juan Pérez García fue un hombre dedicado al servicio y su familia. Nacido en 1950, dedicó su vida profesional a la ingeniería, pero su verdadera pasión era el senderismo y la fotografía de naturaleza.</p>
+                                        <p>Su legado perdurará en cada uno de nosotros. Quienes lo conocieron recordarán su risa contagiosa y su disposición siempre amable para ayudar a quien lo necesitara.</p>
+                                    </div>
+                                    <button class="mt-8 bg-gray-50 border border-gray-200 px-4 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-100 transition-colors">
+                                        <i class="fas fa-bell text-[#C9A063]"></i> Suscribirse a Notificaciones de Aniversario
+                                    </button>
+                                </section>
+
+                                <section id="muro" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                                    <h3 class="text-2xl font-bold mb-6 serif text-[#1A2B3C]">Muro de Recuerdos</h3>
+                                    <div class="space-y-6">
+                                        <div class="flex gap-4 p-4 bg-gray-50 rounded-lg">
+                                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">M</div>
+                                            <div>
+                                                <p class="font-bold text-sm">María S.</p>
+                                                <p class="text-gray-600 text-sm mt-1">Tuve el honor de conocerlo en la universidad. Fue una gran persona.</p>
+                                            </div>
+                                        </div>
+                                        <textarea placeholder="Deja un recuerdo o mensaje de luz..." class="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:outline-none h-24"></textarea>
+                                        <div class="text-right">
+                                            <button class="btn-primary px-6 py-2 rounded-lg font-bold">Publicar Mensaje</button>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+
+                            <!-- Columna Derecha: Sidebar Interactivo -->
+                            <div class="space-y-8">
+                                <div class="bg-[#1A2B3C] text-white p-8 rounded-xl shadow-xl border-t-4 border-[#C9A063]">
+                                    <div class="text-center">
+                                        <div class="text-5xl mb-2">🕯️</div>
+                                        <h3 class="text-3xl font-bold serif mb-1" id="candleCount">87</h3>
+                                        <p class="text-white/60 text-sm uppercase tracking-widest mb-6">Velas Encendidas</p>
+                                        <button onclick="igniteCandle()" class="w-full btn-primary py-4 rounded-lg font-bold flex items-center justify-center gap-2">
+                                            <i class="fas fa-fire"></i> Encender una Vela Virtual
+                                        </button>
+                                    </div>
+                                    <div class="mt-8 border-t border-white/10 pt-6">
+                                        <p class="text-xs text-center italic text-white/50">"Cada vela encendida mantiene viva la llama de su recuerdo."</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                                    <h4 class="font-bold mb-4 text-[#1A2B3C]">Galería Multimedia</h4>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        ${Array(4).fill(0).map((_, i) => `
+                                            <div class="h-24 bg-gray-200 rounded-md overflow-hidden hover:opacity-80 cursor-pointer">
+                                                <img src="https://picsum.photos/seed/${i+50}/300/300" class="w-full h-full object-cover">
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <button class="w-full mt-4 text-sm text-[#C9A063] font-bold">Ver todas las fotos</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Simulación de interacción de velas
+        function igniteCandle() {
+            const countElement = document.getElementById('candleCount');
+            let current = parseInt(countElement.innerText);
+            countElement.innerText = current + 1;
+            
+            // Crear efecto visual temporal
+            const btn = event.currentTarget;
+            btn.innerHTML = '<i class="fas fa-check"></i> Vela Encendida';
+            btn.disabled = true;
+            btn.style.opacity = "0.7";
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-fire"></i> Encender una Vela Virtual';
+                btn.disabled = false;
+                btn.style.opacity = "1";
+            }, 3000);
+        }
+
+        // Cargar página de inicio por defecto
+        window.onload = () => showPage('home');
+    </script>
+</body>
+</html>

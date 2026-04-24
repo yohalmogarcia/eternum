@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+    <!-- Navigation -->
+    <nav th:fragment="header" class="bg-[#1A2B3C] text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='/eternum'">
+                    <div class="w-10 h-10 bg-[#C9A063] rounded-full flex items-center justify-center text-[#1A2B3C]">
+                        <i class="fas fa-dove"></i>
+                    </div>
+                    <span class="text-2xl font-bold tracking-tight serif">Eternum</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a th:href="@{/}" class="nav-link hover:text-[#C9A063] transition-colors">Inicio</a>
+                    <a th:href="@{/memorials}" class="nav-link hover:text-[#C9A063] transition-colors">Memoriales</a>
+                    <a href="#" class="nav-link hover:text-[#C9A063] transition-colors">Servicios</a>
+                    <a href="#" class="nav-link hover:text-[#C9A063] transition-colors">Tarifas</a>
+                    
+                    <!-- Search -->
+                    <div class="relative">
+                        <form th:action="@{/memorials/search}" method="get">
+                            <input type="text" name="query" placeholder="Buscar..." 
+                                   class="bg-white/10 border border-white/20 rounded-full py-1 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A063] w-48">
+                            <button type="submit" class="absolute right-3 top-2 text-white/50 text-xs hover:text-white">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Auth Buttons - Guest -->
+                    <div id="auth-guest" class="flex items-center space-x-3">
+                        <a th:href="@{/login}" class="nav-link border border-white/30 px-4 py-1 rounded hover:bg-white/10 transition-colors">Iniciar Sesión</a>
+                        <a th:href="@{/register}" class="btn-primary px-4 py-1 rounded">Registrarse</a>
+                    </div>
+                    
+                    <!-- Auth User - Logged In -->
+                    <div id="auth-user" class="hidden flex items-center space-x-3">
+                        <span id="user-name" class="text-sm font-medium"></span>
+                        <button onclick="AuthController.logout()" class="nav-link border border-white/30 px-4 py-1 rounded hover:bg-white/10 transition-colors">
+                            <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-white focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                <a th:href="@{/}" class="block py-2 hover:text-[#C9A063]">Inicio</a>
+                <a th:href="@{/memorials}" class="block py-2 hover:text-[#C9A063]">Memoriales</a>
+                <a href="#" class="block py-2 hover:text-[#C9A063]">Servicios</a>
+                <a href="#" class="block py-2 hover:text-[#C9A063]">Tarifas</a>
+                <div id="mobile-auth-guest">
+                    <a th:href="@{/login}" class="block py-2 hover:text-[#C9A063]">Iniciar Sesión</a>
+                    <a th:href="@{/register}" class="block py-2 hover:text-[#C9A063]">Registrarse</a>
+                </div>
+                <div id="mobile-auth-user" class="hidden">
+                    <span id="mobile-user-name" class="block py-2 text-[#C9A063]"></span>
+                    <button onclick="AuthController.logout()" class="block py-2 hover:text-[#C9A063] text-left w-full">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <script th:inline="javascript">
+            document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+            
+            // Actualizar header según estado de autenticación
+            function updateHeaderAuth() {
+                const token = localStorage.getItem('eternum_token');
+                const userData = localStorage.getItem('eternum_user');
+                
+                const authGuest = document.getElementById('auth-guest');
+                const authUser = document.getElementById('auth-user');
+                const userName = document.getElementById('user-name');
+                const mobileAuthGuest = document.getElementById('mobile-auth-guest');
+                const mobileAuthUser = document.getElementById('mobile-auth-user');
+                const mobileUserName = document.getElementById('mobile-user-name');
+                
+                if (token && userData) {
+                    const user = JSON.parse(userData);
+                    // Desktop
+                    authGuest?.classList.add('hidden');
+                    authUser?.classList.remove('hidden');
+                    if (userName) userName.textContent = user.firstName || user.email;
+                    // Mobile
+                    mobileAuthGuest?.classList.add('hidden');
+                    mobileAuthUser?.classList.remove('hidden');
+                    if (mobileUserName) mobileUserName.textContent = user.firstName || user.email;
+                } else {
+                    // Desktop
+                    authGuest?.classList.remove('hidden');
+                    authUser?.classList.add('hidden');
+                    // Mobile
+                    mobileAuthGuest?.classList.remove('hidden');
+                    mobileAuthUser?.classList.add('hidden');
+                }
+            }
+            
+            // Ejecutar al cargar la página
+            document.addEventListener('DOMContentLoaded', updateHeaderAuth);
+        </script>
+    </nav>
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/auth/AuthController.js}"></script>
+    </th:block>
+</body>
+</html>

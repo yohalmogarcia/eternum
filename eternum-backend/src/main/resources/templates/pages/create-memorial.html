@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"
+      lang="es">
+<head>
+    <title>Crear Memorial</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Hero Section -->
+        <section class="bg-[#1A2B3C] py-12">
+            <div class="max-w-7xl mx-auto px-4 text-center text-white">
+                <h1 class="text-4xl font-bold mb-4 serif">Crear Memorial</h1>
+                <p class="text-lg text-gray-300">Honra la memoria de tu ser querido con un espacio digital permanente</p>
+            </div>
+        </section>
+
+        <!-- Form Section -->
+        <section class="py-12 bg-gray-50">
+            <div class="max-w-4xl mx-auto px-4">
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    
+                    <!-- Success Message -->
+                    <div id="successMessage" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        Memorial creado exitosamente. Redirigiendo...
+                    </div>
+                    
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    </div>
+
+                    <form id="createMemorialForm" onsubmit="return handleCreateMemorial(event)">
+                        
+                        <!-- Section: Deceased Information -->
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold mb-6 serif text-[#1A2B3C] border-b pb-2">
+                                <i class="fas fa-user-circle mr-2 text-[#C9A063]"></i>Información del Fallecido
+                            </h2>
+                            
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+                                    <input type="text" id="deceasedName" required
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent"
+                                           placeholder="Ej: Juan">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Apellido *</label>
+                                    <input type="text" id="deceasedLastName" required
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent"
+                                           placeholder="Ej: Pérez">
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6 mt-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
+                                    <input type="date" id="birthDate"
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Fallecimiento *</label>
+                                    <input type="date" id="deathDate" required
+                                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent">
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Epitafio</label>
+                                <input type="text" id="epitaph"
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent"
+                                       placeholder="Ej: Siempre en nuestros corazones">
+                            </div>
+                        </div>
+
+                        <!-- Section: Biography -->
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold mb-6 serif text-[#1A2B3C] border-b pb-2">
+                                <i class="fas fa-book-open mr-2 text-[#C9A063]"></i>Biografía
+                            </h2>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Biografía</label>
+                                <textarea id="biography" rows="6"
+                                          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent"
+                                          placeholder="Comparte la historia de vida de tu ser querido..."></textarea>
+                                <p class="text-sm text-gray-500 mt-1">Puedes incluir logros, hobbies, anécdotas y cualquier detalle que quieras compartir.</p>
+                            </div>
+                        </div>
+
+                        <!-- Section: Photos -->
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold mb-6 serif text-[#1A2B3C] border-b pb-2">
+                                <i class="fas fa-images mr-2 text-[#C9A063]"></i>Fotografía
+                            </h2>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">URL de Foto de Perfil</label>
+                                <input type="url" id="profilePhotoUrl"
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:border-transparent"
+                                       placeholder="https://ejemplo.com/foto.jpg">
+                                <p class="text-sm text-gray-500 mt-1">Ingresa la URL de una imagen o sube una foto más tarde desde el memorial.</p>
+                            </div>
+                        </div>
+
+                        <!-- Section: Privacy -->
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-bold mb-6 serif text-[#1A2B3C] border-b pb-2">
+                                <i class="fas fa-shield-alt mr-2 text-[#C9A063]"></i>Privacidad
+                            </h2>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="isPublic" checked
+                                       class="w-4 h-4 text-[#C9A063] border-gray-300 rounded focus:ring-[#C9A063]">
+                                <label for="isPublic" class="ml-2 text-sm text-gray-700">
+                                    Hacer este memorial público (visible para todos)
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 pt-4 border-t">
+                            <button type="submit" id="submitBtn"
+                                    class="btn-primary px-8 py-3 rounded-lg font-semibold text-lg flex-1">
+                                <i class="fas fa-plus-circle mr-2"></i>Crear Memorial
+                            </button>
+                            <a th:href="@{/}" class="px-8 py-3 rounded-lg font-semibold text-lg border border-gray-300 text-gray-700 hover:bg-gray-50 text-center">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/memorial/MemorialController.js}"></script>
+        <script>
+            /**
+             * Handler para crear memorial
+             */
+            async function handleCreateMemorial(event) {
+                event.preventDefault();
+                
+                // Verificar autenticación
+                if (!AuthController.isAuthenticated()) {
+                    alert('Debes iniciar sesión para crear un memorial');
+                    window.location.href = '/eternum/login';
+                    return false;
+                }
+                
+                const btn = document.getElementById('submitBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creando...';
+                
+                const memorialData = {
+                    deceasedName: document.getElementById('deceasedName').value,
+                    deceasedLastName: document.getElementById('deceasedLastName').value,
+                    birthDate: document.getElementById('birthDate').value || null,
+                    deathDate: document.getElementById('deathDate').value,
+                    epitaph: document.getElementById('epitaph').value,
+                    biography: document.getElementById('biography').value,
+                    profilePhotoUrl: document.getElementById('profilePhotoUrl').value,
+                    isPublic: document.getElementById('isPublic').checked
+                };
+                
+                try {
+                    const result = await MemorialController.create(memorialData);
+                    
+                    if (result.success) {
+                        document.getElementById('successMessage').classList.remove('hidden');
+                        document.getElementById('errorMessage').classList.add('hidden');
+                        
+                        setTimeout(() => {
+                            window.location.href = '/eternum/memorials';
+                        }, 2000);
+                    } else {
+                        document.getElementById('errorMessage').textContent = result.message || 'Error al crear el memorial';
+                        document.getElementById('errorMessage').classList.remove('hidden');
+                        document.getElementById('successMessage').classList.add('hidden');
+                    }
+                } catch (error) {
+                    console.error('Error creating memorial:', error);
+                    document.getElementById('errorMessage').textContent = 'Error al crear el memorial. Intente nuevamente.';
+                    document.getElementById('errorMessage').classList.remove('hidden');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-plus-circle mr-2"></i>Crear Memorial';
+                }
+                
+                return false;
+            }
+        </script>
+    </th:block>
+</body>
+</html>

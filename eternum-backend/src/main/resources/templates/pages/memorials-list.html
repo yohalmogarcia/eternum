@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Memoriales</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Header Section -->
+        <section class="bg-[#1A2B3C] text-white py-16 px-4">
+            <div class="max-w-7xl mx-auto text-center">
+                <h1 class="text-4xl font-bold serif mb-4">Memoriales</h1>
+                <p class="text-lg text-white/80 max-w-2xl mx-auto">Encuentra y honra la memoria de quienes han partido. Cada memorial es un espacio sagrado de recuerdo y amor.</p>
+                
+                <!-- Search Bar -->
+                <div class="mt-8 max-w-xl mx-auto">
+                    <form th:action="@{/memorials/search}" method="get" class="relative">
+                        <input type="text" name="query" th:value="${param.query}"
+                               placeholder="Buscar por nombre..." 
+                               class="w-full pl-12 pr-4 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#C9A063]">
+                        <i class="fas fa-search absolute left-4 top-3.5 text-gray-400 text-lg"></i>
+                        <button type="submit" class="absolute right-2 top-1.5 btn-primary px-6 py-2 rounded-full">
+                            Buscar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Memorials Grid -->
+        <section class="max-w-7xl mx-auto px-4 py-16">
+            <!-- Results info -->
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold serif" th:if="${memorials != null and memorials.hasContent()}">
+                    <span th:if="${param.query == null}">Todos los Memoriales</span>
+                    <span th:if="${param.query != null}" th:text="'Resultados para: ' + ${param.query}">Resultados de búsqueda</span>
+                </h2>
+                <p class="text-gray-500" th:if="${memorials != null}" th:text="${memorials.totalElements} + ' memoriales encontrados'">0 memoriales</p>
+            </div>
+            
+            <!-- Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" th:if="${memorials != null and memorials.hasContent()}">
+                <div th:each="memorial : ${memorials.content}" class="card-memorial bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer"
+                     th:onclick="'window.location.href=\'' + @{/memorial/{id}(id=${memorial.pkMemorial})} + '\''">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center relative">
+                        <i th:if="${memorial.profilePhotoUrl == null or memorial.profilePhotoUrl.isEmpty()}" class="fas fa-user-circle text-6xl text-gray-400"></i>
+                        <img th:if="${memorial.profilePhotoUrl != null and !memorial.profilePhotoUrl.isEmpty()}" 
+                             th:src="${memorial.profilePhotoUrl}" 
+                             class="w-full h-full object-cover" alt="Foto del memorial">
+                        <div class="absolute bottom-4 right-4 bg-white/90 px-2 py-1 rounded text-xs font-bold flex items-center gap-1">
+                            <i class="fas fa-fire text-[#C9A063]"></i>
+                            <span th:text="${memorial.candleCount}">0</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold mb-1" th:text="${memorial.deceasedName + ' ' + memorial.deceasedLastName}">Nombre del Fallecido</h3>
+                        <p class="text-gray-500 text-sm mb-4 italic">
+                            <span th:if="${memorial.birthDate != null}" th:text="${#temporals.format(memorial.birthDate, 'yyyy')}">1950</span>
+                            <span th:if="${memorial.birthDate == null}">...</span>
+                            - 
+                            <span th:text="${#temporals.format(memorial.deathDate, 'yyyy')}">2023</span>
+                        </p>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2" th:if="${memorial.epitaph != null}" th:text="${memorial.epitaph}">Epitafio...</p>
+                        <button class="w-full py-2 rounded border border-[#C9A063] text-[#C9A063] hover:bg-[#C9A063] hover:text-white transition-colors">
+                            Ver Memorial
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div th:if="${memorials == null or !memorials.hasContent()}" class="text-center py-16">
+                <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-700 mb-2">No se encontraron memoriales</h3>
+                <p class="text-gray-500 mb-4" th:if="${param.query != null}">Intenta con otros términos de búsqueda</p>
+                <p class="text-gray-500 mb-4" th:if="${param.query == null}">Aún no hay memoriales registrados</p>
+                <a th:href="@{/}" class="btn-primary px-6 py-2 rounded-lg inline-block">Volver al inicio</a>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="mt-12 flex justify-center" th:if="${memorials != null and memorials.totalPages > 1}">
+                <nav class="flex gap-2">
+                    <a th:if="${memorials.hasPrevious()}" 
+                       th:href="@{/memorials(page=${memorials.number - 1})}"
+                       class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    
+                    <span th:each="i : ${#numbers.sequence(0, memorials.totalPages - 1)}" 
+                          th:class="'px-4 py-2 rounded-lg transition-colors ' + (${i == memorials.number} ? 'bg-[#C9A063] text-white' : 'border border-gray-300 hover:bg-gray-50')"
+                          th:text="${i + 1}"
+                          th:href="@{/memorials(page=${i})}">1</span>
+                    
+                    <a th:if="${memorials.hasNext()}" 
+                       th:href="@{/memorials(page=${memorials.number + 1})}"
+                       class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </nav>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="bg-[#C9A063] text-white py-16 px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold serif mb-4">¿Deseas crear un memorial?</h2>
+                <p class="text-lg mb-8 text-white/90">Preserva la memoria de tu ser querido en un espacio digital eterno. Es fácil, rápido y significativo.</p>
+                <a th:href="@{/register}" class="bg-white text-[#C9A063] px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors inline-block">
+                    Comenzar Ahora
+                </a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

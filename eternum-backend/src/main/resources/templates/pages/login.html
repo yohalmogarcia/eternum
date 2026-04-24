@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Iniciar Sesión</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <section class="min-h-[calc(100vh-300px)] flex items-center justify-center px-4 py-20 bg-slate-200">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-100 fade-in">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-[#C9A063] rounded-full flex items-center justify-center text-[#1A2B3C] mx-auto mb-4">
+                        <i class="fas fa-lock text-2xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold serif">Iniciar Sesión</h2>
+                    <p class="text-gray-500 mt-2">Accede a tu cuenta para gestionar tus memoriales</p>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="space-y-6" onsubmit="return handleLogin(event)">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                        <div class="relative">
+                            <i class="fas fa-envelope absolute left-3 top-3 text-gray-400"></i>
+                            <input type="email" id="email" name="email" required
+                                   placeholder="ejemplo@correo.com" 
+                                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:outline-none">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                        <div class="relative">
+                            <i class="fas fa-key absolute left-3 top-3 text-gray-400"></i>
+                            <input type="password" id="password" name="password" required
+                                   placeholder="••••••••" 
+                                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C9A063] focus:outline-none">
+                        </div>
+                        <div class="text-right mt-1">
+                            <a href="#" onclick="showPasswordReset()" class="text-xs text-[#C9A063] hover:underline">¿Olvidó su contraseña?</a>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="loginBtn" class="btn-primary w-full py-3 rounded-lg font-bold shadow-md">
+                        Ingresar
+                    </button>
+                </form>
+                
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm"></div>
+                
+                <!-- Divider -->
+                <div class="relative my-8">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">O inicia sesión con</span>
+                    </div>
+                </div>
+                
+                <!-- Social Login -->
+                <div class="flex gap-4">
+                    <button onclick="socialLogin('google')" class="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fab fa-google text-red-500"></i>
+                    </button>
+                    <button onclick="socialLogin('facebook')" class="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fab fa-facebook text-blue-600"></i>
+                    </button>
+                    <button onclick="socialLogin('email')" class="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-envelope"></i>
+                    </button>
+                </div>
+                
+                <!-- Register Link -->
+                <p class="mt-8 text-center text-sm text-gray-600">
+                    ¿No tienes cuenta? 
+                    <a th:href="@{/register}" class="text-[#C9A063] font-bold hover:underline">Registrarse</a>
+                </p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
